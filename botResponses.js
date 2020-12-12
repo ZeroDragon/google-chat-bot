@@ -1,32 +1,27 @@
-const addZ = i => `00${i}`.slice(-2)
-const weekly = []
+const broadcast = require('./broadcast')
+
 module.exports = (bot) => {
-  bot.on(/^ayuda$/i, _ => {
+  bot.on(/^ayuda$/i, ([, argument]) => {
     bot.sendMessage([
-      'Bienvenido a *Zero Bot*',
-      'Pronto seré tu asistente personal',
+      'Bienvenido a *Inge Resuelve Bot*',
       'Puedes usar los siguientes comandos:',
       'ayuda',
-      'weekly'
+      'broadcast listaDeCanales Mensaje',
+      'config [get|add|remove] key value'
     ].join('\n'))
   })
-  bot.on(/^weekly$/i, (matched, message) => {
-    let t = new Date()
-    t = `${t.getFullYear()}-${addZ(t.getMonth() + 1)}-${addZ(t.getDate())}`
-    console.log(message)
+
+  bot.on(/^config (.+)$/i, ([, params]) => {
+    const [verb, key, ...values] = params.split(' ')
+    const value = values.join(' ')
+    if (!process.brain[verb]) return bot.sendMessage(`no sé que es: *${verb}*`)
+    const response = process.brain[verb](key, value)
     bot.sendMessage([
-      `Ok iniciemos el weekly para la semana del ${t}`,
-      'Cuando termines, solo escribe /listo'
+      '```',
+      JSON.stringify(response || 'Nothing to see here', false, 2),
+      '```'
     ].join('\n'))
   })
-  bot.on(/\+(.*)|\+ (.*)/i, matched => {
-    weekly.push(matched[1])
-    bot.sendMessage('aha, que más? si ya terminaste solo escribe /listo')
-  })
-  bot.on(/\/listo/i, matched => {
-    bot.sendMessage([
-      'Ok esto es lo que tengo del weekly:',
-      ...weekly
-    ].join('\n'))
-  })
+
+  broadcast.forEach(([match, fn]) => bot.on(match, fn(bot)))
 }
