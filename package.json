@@ -4,13 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "deploy": "gcloud app deploy"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2",
+    "date-fns": "^2.16.1",
     "express": "^4.17.1",
+    "googleapis": "^66.0.0",
     "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {
